@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/tsoding/ebisp.svg?branch=master)](https://travis-ci.org/tsoding/ebisp)
+
 # Ebisp
 
 Embedded Lisp
