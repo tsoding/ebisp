@@ -66,6 +66,16 @@ char *const repl_cli[] = {
     NULL
 };
 
+char *const test_cli[] = {
+    "gcc",
+    "-Wall", "-Werror", "-o", "ebisp_test",
+    "-Isrc/",
+    "test/main.c",
+    "-L.",
+    "-lebisp",
+    NULL
+};
+
 char *const objs_cli[] = {
     "gcc",
     "-Wall", "-Werror", "-c",
@@ -124,7 +134,7 @@ int main(int argc, char *argv[])
     runvp("gcc", objs_cli);
     runvp("ar", ar_cli);
     runvp("gcc", repl_cli);
-
+    runvp("gcc", test_cli);
 
     return 0;
 }

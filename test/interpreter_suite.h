@@ -2,9 +2,9 @@
 #define INTERPRETER_SUITE_H_
 
 #include "test.h"
-#include "ebisp/builtins.h"
-#include "ebisp/expr.h"
-#include "ebisp/interpreter.h"
+#include "builtins.h"
+#include "expr.h"
+#include "interpreter.h"
 
 TEST(equal_test)
 {
