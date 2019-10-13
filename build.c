@@ -57,6 +57,7 @@ void rebuild_if_modified(int argc, char *argv[])
 #define EXECUTABLE_NAME "test"
 
 char *const repl_cli[] = {
+    "gcc",
     "-Wall", "-Werror", "-o", "repl",
     "src/repl.c",
     "src/repl_runtime.c",
@@ -66,6 +67,7 @@ char *const repl_cli[] = {
 };
 
 char *const objs_cli[] = {
+    "gcc",
     "-Wall", "-Werror", "-c",
     "src/builtins.c",
     "src/expr.c",
@@ -122,6 +124,7 @@ int main(int argc, char *argv[])
     runvp("gcc", objs_cli);
     runvp("ar", ar_cli);
     runvp("gcc", repl_cli);
+
 
     return 0;
 }
