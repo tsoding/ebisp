@@ -1,4 +1,4 @@
-#include "system/stacktrace.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -7,13 +7,11 @@
 #include "builtins.h"
 #include "expr.h"
 #include "gc.h"
-#include "system/lt.h"
 
 #define GC_INITIAL_CAPACITY 256
 
 struct Gc
 {
-    Lt *lt;
     struct Expr *exprs;
     int *visited;
     size_t size;
@@ -33,8 +31,8 @@ static intptr_t value_of_expr(struct Expr expr)
 
 static int compare_exprs(const void *a, const void *b)
 {
-    trace_assert(a);
-    trace_assert(b);
+    assert(a);
+    assert(b);
 
     const intptr_t ptr_a = value_of_expr(*(const struct Expr *)a);
     const intptr_t ptr_b = value_of_expr(*(const struct Expr *)b);
@@ -51,44 +49,55 @@ static int compare_exprs(const void *a, const void *b)
 
 Gc *create_gc(void)
 {
-    Lt *lt = create_lt();
-
-    Gc *gc = PUSH_LT(lt, calloc(1, sizeof(Gc)), free);
+    Gc *gc = calloc(1, sizeof(Gc));
     if (gc == NULL) {
-        RETURN_LT(lt, NULL);
+        goto error;
     }
-    gc->lt = lt;
 
-    gc->exprs = PUSH_LT(lt, calloc(GC_INITIAL_CAPACITY, sizeof(struct Expr)), free);
+    gc->exprs = calloc(GC_INITIAL_CAPACITY, sizeof(struct Expr));
     if (gc->exprs == NULL) {
-        RETURN_LT(lt, NULL);
+        goto error;
     }
 
-    gc->visited = PUSH_LT(lt, calloc(GC_INITIAL_CAPACITY, sizeof(int)), free);
+    gc->visited = calloc(GC_INITIAL_CAPACITY, sizeof(int));
     if (gc->visited == NULL) {
-        RETURN_LT(lt, NULL);
+        goto error;
     }
 
     gc->size = 0;
     gc->capacity = GC_INITIAL_CAPACITY;
 
     return gc;
+
+error:
+    destroy_gc(gc);
+    return NULL;
 }
 
 void destroy_gc(Gc *gc)
 {
-    trace_assert(gc);
+    assert(gc);
 
     for (size_t i = 0; i < gc->size; ++i) {
         destroy_expr(gc->exprs[i]);
     }
 
-    RETURN_LT0(gc->lt);
+    if (gc) {
+        if (gc->exprs) {
+            free(gc->exprs);
+        }
+
+        if (gc->visited) {
+            free(gc->visited);
+        }
+
+        free(gc);
+    }
 }
 
 int gc_add_expr(Gc *gc, struct Expr expr)
 {
-    trace_assert(gc);
+    assert(gc);
 
     if (gc->size >= gc->capacity) {
         const size_t new_capacity = gc->capacity * 2;
@@ -109,8 +118,8 @@ int gc_add_expr(Gc *gc, struct Expr expr)
         }
 
         gc->capacity = new_capacity;
-        gc->exprs = REPLACE_LT(gc->lt, gc->exprs, new_exprs);
-        gc->visited = REPLACE_LT(gc->lt, gc->visited, new_visited);
+        gc->exprs = new_exprs;
+        gc->visited = new_visited;
     }
 
     gc->exprs[gc->size++] = expr;
@@ -120,7 +129,7 @@ int gc_add_expr(Gc *gc, struct Expr expr)
 
 static long int gc_find_expr(Gc *gc, struct Expr expr)
 {
-    trace_assert(gc);
+    assert(gc);
     (void) expr;
 
     struct Expr *result =
@@ -136,14 +145,14 @@ static long int gc_find_expr(Gc *gc, struct Expr expr)
 
 static void gc_traverse_expr(Gc *gc, struct Expr root)
 {
-    trace_assert(gc);
-    trace_assert(root.type != EXPR_VOID);
+    assert(gc);
+    assert(root.type != EXPR_VOID);
     const long int root_index = gc_find_expr(gc, root);
     if (root_index < 0) {
         fprintf(stderr, "GC tried to collect something that was not registered\n");
         print_expr_as_sexpr(stderr, root);
         fprintf(stderr, "\n");
-        trace_assert(root_index >= 0);
+        assert(root_index >= 0);
     }
 
     if (gc->visited[root_index]) {
@@ -165,7 +174,7 @@ static void gc_traverse_expr(Gc *gc, struct Expr root)
 
 void gc_collect(Gc *gc, struct Expr root)
 {
-    trace_assert(gc);
+    assert(gc);
     (void) root;
 
     /* Sort gc->exprs O(nlogn) */

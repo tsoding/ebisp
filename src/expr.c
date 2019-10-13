@@ -1,13 +1,13 @@
-#include "system/stacktrace.h"
+#include <assert.h>
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "ebisp/expr.h"
-#include "ebisp/gc.h"
-#include "system/str.h"
+#include "expr.h"
+#include "gc.h"
+#include "str.h"
 
 struct Expr atom_as_expr(struct Atom *atom)
 {
@@ -40,7 +40,7 @@ struct Expr void_expr(void)
 
 void print_atom_as_sexpr(FILE *stream, struct Atom *atom)
 {
-    trace_assert(atom);
+    assert(atom);
 
     switch (atom->type) {
     case ATOM_SYMBOL: {
@@ -72,8 +72,8 @@ void print_atom_as_sexpr(FILE *stream, struct Atom *atom)
 
 static void print_atom_as_c(FILE *stream, struct Atom *atom)
 {
-    trace_assert(stream);
-    trace_assert(atom);
+    assert(stream);
+    assert(atom);
 
     switch(atom->type) {
     case ATOM_SYMBOL: {
@@ -108,7 +108,7 @@ static void print_atom_as_c(FILE *stream, struct Atom *atom)
 
 void print_cons_as_sexpr(FILE *stream, struct Cons *head)
 {
-    trace_assert(head);
+    assert(head);
 
     struct Cons *cons = head;
 
@@ -132,8 +132,8 @@ void print_cons_as_sexpr(FILE *stream, struct Cons *head)
 
 static void print_cons_as_c(FILE *stream, struct Cons *cons)
 {
-    trace_assert(stream);
-    trace_assert(cons);
+    assert(stream);
+    assert(cons);
 
     fprintf(stream, "CONS(gc, ");
     print_expr_as_c(stream, cons->car);
@@ -160,7 +160,7 @@ void print_expr_as_sexpr(FILE *stream, struct Expr expr)
 
 void print_expr_as_c(FILE *stream, struct Expr expr)
 {
-    trace_assert(stream);
+    assert(stream);
     (void) expr;
 
     switch (expr.type) {
@@ -388,8 +388,8 @@ void destroy_atom(struct Atom *atom)
 
 static int atom_as_sexpr(struct Atom *atom, char *output, size_t n)
 {
-    trace_assert(atom);
-    trace_assert(output);
+    assert(atom);
+    assert(output);
 
     switch (atom->type) {
     case ATOM_SYMBOL: {
@@ -420,8 +420,8 @@ static int atom_as_sexpr(struct Atom *atom, char *output, size_t n)
 
 static int cons_as_sexpr(struct Cons *head, char *output, size_t n)
 {
-    trace_assert(head);
-    trace_assert(output);
+    assert(head);
+    assert(output);
 
     /* TODO(#378): cons_as_sexpr does not handle encoding errors of snprintf */
 

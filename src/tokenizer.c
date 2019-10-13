@@ -1,6 +1,6 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include "system/stacktrace.h"
 #include <ctype.h>
 #include <stdlib.h>
 
@@ -34,7 +34,7 @@ static bool is_symbol_char(char x)
 
 static const char *skip_whitespace(const char *str)
 {
-    trace_assert(str);
+    assert(str);
 
     while(*str != 0 && isspace(*str)) {
         str++;
@@ -45,7 +45,7 @@ static const char *skip_whitespace(const char *str)
 
 static const char *next_quote(const char *str)
 {
-    trace_assert(str);
+    assert(str);
 
     while(*str != 0 && *str != '"') {
         str++;
@@ -56,7 +56,7 @@ static const char *next_quote(const char *str)
 
 static const char *skip_until_newline(const char *str)
 {
-    trace_assert(str);
+    assert(str);
 
     while(*str != 0 && *str != '\n') {
         str++;
@@ -67,7 +67,7 @@ static const char *skip_until_newline(const char *str)
 
 static const char *next_non_symbol(const char *str)
 {
-    trace_assert(str);
+    assert(str);
 
     while(*str != 0 && is_symbol_char(*str)) {
         str++;
@@ -78,7 +78,7 @@ static const char *next_non_symbol(const char *str)
 
 struct Token next_token(const char *str)
 {
-    trace_assert(str);
+    assert(str);
 
     str = skip_whitespace(str);
     if (*str == 0) {

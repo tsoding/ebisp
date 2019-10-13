@@ -1,4 +1,3 @@
-#include "system/stacktrace.h"
 #include <stdbool.h>
 
 #include "gc.h"

@@ -1,4 +1,4 @@
-#include "system/stacktrace.h"
+#include <assert.h>
 #include "./scope.h"
 
 static struct Expr get_scope_value_impl(struct Expr scope, struct Expr name)
@@ -63,8 +63,8 @@ void set_scope_value(Gc *gc, struct Scope *scope, struct Expr name, struct Expr 
 
 void push_scope_frame(Gc *gc, struct Scope *scope, struct Expr vars, struct Expr args)
 {
-    trace_assert(gc);
-    trace_assert(scope);
+    assert(gc);
+    assert(scope);
 
     struct Expr frame = NIL(gc);
 
@@ -81,8 +81,8 @@ void push_scope_frame(Gc *gc, struct Scope *scope, struct Expr vars, struct Expr
 
 void pop_scope_frame(Gc *gc, struct Scope *scope)
 {
-    trace_assert(gc);
-    trace_assert(scope);
+    assert(gc);
+    assert(scope);
 
     if (!nil_p(scope->expr)) {
         scope->expr = scope->expr.cons->cdr;

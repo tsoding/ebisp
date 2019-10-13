@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include "ebisp/expr.h"
-#include "ebisp/tokenizer.h"
+#include "expr.h"
+#include "tokenizer.h"
 
 struct ParseResult
 {

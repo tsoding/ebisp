@@ -1,4 +1,4 @@
-#include "system/stacktrace.h"
+#include <assert.h>
 #include <math.h>
 #include <string.h>
 #include <stdarg.h>
@@ -193,8 +193,8 @@ static struct EvalResult eval_funcall(Gc *gc,
 
 struct EvalResult eval_block(Gc *gc, struct Scope *scope, struct Expr block)
 {
-    trace_assert(gc);
-    trace_assert(scope);
+    assert(gc);
+    assert(scope);
 
     if (!list_p(block)) {
         return wrong_argument_type(gc, "listp", block);
@@ -236,8 +236,8 @@ struct EvalResult
 car(void *param, Gc *gc, struct Scope *scope, struct Expr args)
 {
     (void) param;
-    trace_assert(gc);
-    trace_assert(scope);
+    assert(gc);
+    assert(scope);
 
     struct Expr xs = NIL(gc);
 
