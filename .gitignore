@@ -1,5 +1,4 @@
 *.o
 *.a
-build
 repl
 ebisp_test

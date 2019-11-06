@@ -3,6 +3,5 @@ compiler:
   - gcc
   - clang
 script:
-  - gcc -o build build.c
-  - ./build
-  - ./ebisp_test
+  - make
+  - make test
