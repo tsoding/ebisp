@@ -9,6 +9,20 @@
 
 #include "std.h"
 
+struct EvalResult
+real(Gc *gc, struct Expr a)
+{
+    if (real_p(a)) {
+        return eval_success(a);
+    }
+
+    if (integer_p(a)) {
+        return eval_success(REAL(gc, (float) a.atom->num));
+    }
+
+    return wrong_argument_type(gc, "(or realp integerp)", a);
+}
+
 static struct Expr
 lambda(Gc *gc, struct Expr args, struct Expr body, struct Scope *scope)
 {
@@ -108,6 +122,24 @@ list_op(void *param, Gc *gc, struct Scope *scope, struct Expr args)
     return eval_success(args);
 }
 
+struct EvalResult
+plus2(Gc *gc, struct Expr a, struct Expr b)
+{
+    if (integer_p(a) && integer_p(b)) {
+        return eval_success(INTEGER(gc, a.atom->num + b.atom->num));
+    } else {
+        struct EvalResult result_a = real(gc, a);
+        if (result_a.is_error) return result_a;
+
+        struct EvalResult result_b = real(gc, b);
+        if (result_b.is_error) return result_b;
+
+        return eval_success(
+            REAL(gc, result_a.expr.atom->real + result_b.expr.atom->real));
+    }
+}
+
+
 static struct EvalResult
 plus_op(void *param, Gc *gc, struct Scope *scope, struct Expr args)
 {
@@ -115,38 +147,26 @@ plus_op(void *param, Gc *gc, struct Scope *scope, struct Expr args)
     assert(gc);
     assert(scope);
 
-    // TODO(#1100): plus_op does not support floats
-
-    long int result = 0L;
+    struct Expr acc = INTEGER(gc, 0L);
 
     while (!nil_p(args)) {
         if (!cons_p(args)) {
             return wrong_argument_type(gc, "consp", args);
         }
 
-        if (!integer_p(CAR(args))) {
-            return wrong_argument_type(gc, "integerp", CAR(args));
+        struct Expr car = CAR(args);
+
+        struct EvalResult result = plus2(gc, acc, car);
+
+        if (result.is_error) {
+            return result;
         }
 
-        result += CAR(args).atom->num;
+        acc = result.expr;
         args = CDR(args);
     }
 
-    return eval_success(INTEGER(gc, result));
-}
-
-struct EvalResult
-real(Gc *gc, struct Expr a)
-{
-    if (real_p(a)) {
-        return eval_success(a);
-    }
-
-    if (integer_p(a)) {
-        return eval_success(REAL(gc, (float) a.atom->num));
-    }
-
-    return wrong_argument_type(gc, "(or realp integerp)", a);
+    return eval_success(acc);
 }
 
 struct EvalResult
