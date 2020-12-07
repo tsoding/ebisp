@@ -1,6 +1,6 @@
 CS=src/builtins.c src/expr.c src/gc.c src/interpreter.c src/parser.c src/scope.c src/std.c src/tokenizer.c src/str.c
 OBJS=builtins.o expr.o gc.o interpreter.o parser.o scope.o std.o tokenizer.o str.o
-CFLAGS=-Wall -Werror
+CFLAGS=-Wall -Werror -ggdb
 
 .PHONY: all
 all: libebisp.a repl
