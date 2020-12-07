@@ -75,38 +75,47 @@ unquote(void *param, Gc *gc, struct Scope *scope, struct Expr args)
 }
 
 static struct EvalResult
+greaterThan2(Gc *gc, struct Expr a, struct Expr b)
+{
+    if (integer_p(a) && integer_p(b)) {
+        return eval_success(bool_as_expr(gc, a.atom->num > b.atom->num));
+    } else {
+        struct EvalResult result_a = real(gc, a);
+        if (result_a.is_error) return result_a;
+
+        struct EvalResult result_b = real(gc, b);
+        if (result_b.is_error) return result_b;
+
+        return eval_success(
+            bool_as_expr(gc, result_a.expr.atom->real > result_b.expr.atom->real));
+    }
+}
+
+static struct EvalResult
 greaterThan(void *param, Gc *gc, struct Scope *scope, struct Expr args)
 {
     assert(gc);
     assert(scope);
     (void) param;
 
-    // TODO(#1099): greaterThan does not support floats
-
-    long int x1 = 0;
-    struct Expr xs = void_expr();
-
-    struct EvalResult result = match_list(gc, "d*", args, &x1, &xs);
-    if (result.is_error) {
-        return result;
+    if (!cons_p(args)) {
+        return wrong_argument_type(gc, "consp", args);
     }
 
+    struct Expr x1 = CAR(args);
+    args = CDR(args);
+
     bool sorted = true;
+    while (!nil_p(args) && sorted) {
+        struct Expr x2 = CAR(args);
+        args = CDR(args);
 
-    while (!nil_p(xs) && sorted) {
-        long int x2 = 0;
-        result = match_list(gc, "d*", xs, &x2, NULL);
-        if (result.is_error) {
-            return result;
-        }
+        struct EvalResult result = greaterThan2(gc, x1, x2);
+        if (result.is_error) return result;
 
-        sorted = sorted && (x1 > x2);
-        args = xs;
+        sorted = sorted && !nil_p(result.expr);
 
-        result = match_list(gc, "d*", args, &x1, &xs);
-        if (result.is_error) {
-            return result;
-        }
+        x1 = x2;
     }
 
     return eval_success(bool_as_expr(gc, sorted));
