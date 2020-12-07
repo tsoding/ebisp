@@ -92,6 +92,12 @@ bool integer_p(struct Expr obj)
         && obj.atom->type == ATOM_INTEGER;
 }
 
+bool real_p(struct Expr obj)
+{
+    return obj.type == EXPR_ATOM
+        && obj.atom->type == ATOM_REAL;
+}
+
 bool string_p(struct Expr obj)
 {
     return obj.type == EXPR_ATOM
