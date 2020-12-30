@@ -1,4 +1,5 @@
 *.o
 *.a
+*.dSYM
 repl
 ebisp_test
