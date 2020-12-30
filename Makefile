@@ -22,7 +22,3 @@ test: ebisp_test
 ebisp_test: libebisp.a test/main.c
 	$(CC) $(CFLAGS) -Isrc/ -o ebisp_test test/main.c -L. -lebisp
 
-.PHONY: clean
-clean:
-	rm -fr *.dSYM libebisp.a repl ebisp_test
-
