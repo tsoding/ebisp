@@ -22,3 +22,6 @@ test: ebisp_test
 ebisp_test: libebisp.a test/main.c
 	$(CC) $(CFLAGS) -Isrc/ -o ebisp_test test/main.c -L. -lebisp
 
+clean:
+	rm -f libebisp.a repl ebisp_test *.o
+
