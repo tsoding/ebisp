@@ -264,33 +264,41 @@ struct ParseResult read_expr_from_file(Gc *gc, const char *filename)
     }
 
     if (fseek(stream, 0, SEEK_END) != 0) {
+        fclose(stream);
         return parse_failure("Could not find the end of the file", NULL);
     }
 
     const long int buffer_length = ftell(stream);
 
     if (buffer_length < 0) {
+        fclose(stream);
         return parse_failure("Couldn't get the size of file", NULL);
     }
 
     if (buffer_length == 0) {
+        fclose(stream);
         return parse_failure("File is empty", NULL);
     }
 
     if (buffer_length >= MAX_BUFFER_LENGTH) {
+        fclose(stream);
         return parse_failure("File is too big", NULL);
     }
 
     if (fseek(stream, 0, SEEK_SET) != 0) {
+        fclose(stream);
         return parse_failure("Could not find the beginning of the file", NULL);
     }
 
     char * const buffer = malloc((size_t) buffer_length + 1);
     if (buffer == NULL) {
+        fclose(stream);
         return parse_failure(strerror(errno), NULL);
     }
 
     if (fread(buffer, 1, (size_t) buffer_length, stream) != (size_t) buffer_length) {
+        free(buffer);
+        fclose(stream);
         return parse_failure("Could not read the file", NULL);
     }
 
@@ -313,33 +321,41 @@ struct ParseResult read_all_exprs_from_file(Gc *gc, const char *filename)
     }
 
     if (fseek(stream, 0, SEEK_END) != 0) {
+        fclose(stream);
         return parse_failure("Could not find the end of the file", NULL);
     }
 
     const long int buffer_length = ftell(stream);
 
     if (buffer_length < 0) {
+        fclose(stream);
         return parse_failure("Couldn't get the size of file", NULL);
     }
 
     if (buffer_length == 0) {
+        fclose(stream);
         return parse_failure("File is empty", NULL);
     }
 
     if (buffer_length >= MAX_BUFFER_LENGTH) {
+        fclose(stream);
         return parse_failure("File is too big", NULL);
     }
 
     if (fseek(stream, 0, SEEK_SET) != 0) {
+        fclose(stream);
         return parse_failure("Could not find the beginning of the file", NULL);
     }
 
     char * const buffer = malloc((size_t) buffer_length + 1);
     if (buffer == NULL) {
+        fclose(stream);
         return parse_failure(strerror(errno), NULL);
     }
 
     if (fread(buffer, 1, (size_t) buffer_length, stream) != (size_t) buffer_length) {
+        free(buffer);
+        fclose(stream);
         return parse_failure("Could not read the file", NULL);
     }
 
