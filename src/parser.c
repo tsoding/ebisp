@@ -297,6 +297,7 @@ struct ParseResult read_expr_from_file(Gc *gc, const char *filename)
     }
 
     if (fread(buffer, 1, (size_t) buffer_length, stream) != (size_t) buffer_length) {
+	free(buffer);
 	fclose(stream);
         return parse_failure("Could not read the file", NULL);
     }
@@ -353,6 +354,7 @@ struct ParseResult read_all_exprs_from_file(Gc *gc, const char *filename)
     }
 
     if (fread(buffer, 1, (size_t) buffer_length, stream) != (size_t) buffer_length) {
+	free(buffer);
 	fclose(stream);
         return parse_failure("Could not read the file", NULL);
     }
